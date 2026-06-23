@@ -1,4 +1,5 @@
 import React, { createContext, useState } from 'react';
+import { toast } from 'react-toastify';
 
 export const BookContext = createContext();
 
@@ -10,16 +11,37 @@ const BookProvider = ({children}) => {
         // step 4: If the book is already exesit then show alert/ toast. Check it with find
         // step 5: if not then add the book in the array or collection
     const [storeBooks, setStoreBooks] = useState([]);
+    const [wishList, setWishList] = useState([])
 
     const handleMarkAsRead = (currentBook) => {
 
         const isExistBook = storeBooks.find((book) => book.bookId === currentBook.bookId);
 
         if (isExistBook) {
-            alert("the book is already aded")
+            toast.error("the book is already added")
         } else{
-            setStoreBooks([...storeBooks, currentBook])
-            alert(`${currentBook.bookName} is added to this list`)
+            setStoreBooks([...storeBooks, currentBook]);
+            toast.success(`${currentBook.bookName} is added to this read list`)
+            
+        }
+    };
+
+    const handleWishList = (currentBook) => {
+
+        const isExistedInReadList = storeBooks.find((book) => book.bookId === currentBook.bookId);
+
+        if(isExistedInReadList){
+            toast.warn(`${currentBook.bookName} is already in read list!`);
+            return;
+        }
+
+        const isExistBook = wishList.find((book) => book.bookId === currentBook.bookId);
+
+        if (isExistBook) {
+            toast.error("the book is already added!");
+        } else{
+           setWishList([...wishList, currentBook]);
+            toast.success(`${currentBook.bookName} is added to this Wish list`);
             
         }
     };
@@ -27,7 +49,10 @@ const BookProvider = ({children}) => {
     const bookData = {
         handleMarkAsRead,
         setStoreBooks,
-        storeBooks
+        storeBooks,
+        handleWishList,
+        setWishList,
+        wishList
     }
     return <BookContext.Provider value={bookData}>
         {children}
